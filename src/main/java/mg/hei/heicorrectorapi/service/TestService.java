@@ -67,6 +67,7 @@ public class TestService {
     }
   }
 
+  //TODO: this method should be refactored
   public CompletableFuture<Void> processOutput(Session toTest, File resultDir) {
     return CompletableFuture.runAsync(() -> {
       File[] files = resultDir.listFiles((dir, name) -> name.endsWith(".txt"));
