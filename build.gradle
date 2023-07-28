@@ -1,0 +1,90 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.openapitools:openapi-generator-gradle-plugin:6.2.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.2'
+    id 'org.openapi.generator' version '6.2.0'
+}
+
+
+group = 'mg.hei'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+tasks.register('generateJavaClient', GenerateTask) {
+    generatorName = "java"
+    inputSpec = "$rootDir/doc/api.yaml".toString()
+    outputDir = "$buildDir/gen".toString()
+    apiPackage = "mg.hei.heicorrectorapi.rest.api"
+    invokerPackage = "mg.hei.heicorrectorapi.rest.invoker"
+    modelPackage = "mg.hei.heicorrectorapi.rest.model"
+    configOptions = [
+            dateLibrary: "custom"
+    ]
+    typeMappings = [
+            Date    : "java.time.LocalDate",
+            DateTime: "java.time.ZonedDateTime",
+    ]
+    groupId = 'mg.hei'
+    id = 'heicorrectorapi-gen'
+    skipValidateSpec = false
+    logToStderr = true
+    generateAliasAsModel = false
+    enablePostProcessFile = false
+}
+
+tasks.register('publishClientToMavenLocal', Exec) {
+    dependsOn generateJavaClient
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        commandLine './.shell/publish_client_to_local_maven.bat'
+    } else {
+        commandLine './.shell/publish_client_to_local_maven.sh'
+    }
+}
+
+tasks.compileJava.dependsOn publishClientToMavenLocal
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'mg.hei:heicorrectorapi-gen:1.0.0'
+    implementation 'org.flywaydb:flyway-core'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

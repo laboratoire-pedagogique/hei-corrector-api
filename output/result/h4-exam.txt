@@ -1,0 +1,31 @@
+
+> unit-tests-h4@1.0.0 test
+> mocha *test.js
+
+
+
+  KATA : find the unique number (pt:3)
+    ✔ should return the unique number in the array (p:1)
+    ✔ should handle negative numbers (p:1)
+    ✔ should handle large numbers (p:1)
+
+  KATA : is hiding an option ? (pt:6)
+    ✔ should return true when you can reach a hiding spot before the animal (p:1)
+    ✔ should return false when reaching a hiding spot is not an option (p:1)
+    ✔ should return false when reaching a hiding spot is not an option (p:1)
+    ✔ should return false when there are no hiding spots (p:1)
+    ✔ should return false when you reach the hiding stop at the same time as the animal (p:1)
+    ✔ should return false when there are multiple hiding spots but reaching any of them is not an option (p:1)
+
+  KATA : sumIntervals (pt:7)
+    ✔ should return the sum of interval lengths (p:1)
+    ✔ should handle overlapping intervals correctly (p:1)
+    ✔ should handle multiple intervals correctly (p:1)
+    ✔ should handle multiple overlapping intervals correctly (p:1)
+    ✔ should handle multiple overlapping intervals with additional intervals correctly (p:1)
+    ✔ should handle non-overlapping intervals correctly (p:1)
+    ✔ should handle empty intervals correctly (p:1)
+
+
+  16 passing (18ms)
+
