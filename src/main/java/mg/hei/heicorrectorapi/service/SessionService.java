@@ -62,14 +62,11 @@ public class SessionService {
       // We must wait that all commands are completed
       CompletableFuture<Void> completedFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-      File resultDir = new File("./output/result");
+      File resultDir = new File("./output");
 
       //We fire processOutput after
-      return completedFutures.thenApplyAsync((v) -> {
-        testService.processOutput(toTest, resultDir).join();
-        // re-fetch the session because it was updated
-        return repository.findById(sessionId).orElseThrow();
-      });
+      return completedFutures.thenCompose((v) -> testService.processOutput(toTest, resultDir)
+          .thenApply((voidResult) -> repository.findById(sessionId).orElseThrow()));
 
     } else {
       log.warn("No directories found.");

@@ -58,19 +58,19 @@ public class SystemUtils {
       throws IOException, InterruptedException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-    String logLocation;
-    if (process.waitFor() == 0) {
-      log.info("Command executed successfully.");
-      logLocation = "output/result";
-    } else {
+    String logLocation = "output";
+
+    if (process.waitFor() != 0) {
       log.error("Command execution failed.");
-      logLocation = "output/error";
+    } else {
+      log.info("Command executed successfully.");
     }
 
     writeOutputToFile(reader, logLocation, fileName);
 
     reader.close();
   }
+
 
   public static CompletableFuture<Void> execCmdAsyncAtDir(String cmd, String dir, String fileName) {
     return CompletableFuture.runAsync(() -> {

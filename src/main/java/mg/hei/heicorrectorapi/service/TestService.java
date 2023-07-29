@@ -80,55 +80,66 @@ public class TestService {
 
             Integer score = 0;
 
-            // Creating a test result and assign the toTest Session to it
             TestResult testResult = new TestResult();
             testResult.setSession(toTest);
             testResult.setStudent(file.getName().split("\\.")[0]);
-
-            // To avoid NullPointerException
             testResult.setTests(new ArrayList<>());
 
-            //Then directly save it then retrieve its id after
             TestResult savedTestResult = resultRepository.saveAndFlush(testResult);
 
             Test test = null;
             for (String line : lines) {
               try {
-                if (line.contains("KATA")) {
+                if (line.contains("KATA :")) {
                   if (test != null) {
+                    testResult.setScore(score);
                     testResult.getTests().add(test);
+                    savedTestResult = resultRepository.saveAndFlush(testResult);
                   }
 
-                  // We take the kata's name by splitting the line
                   String[] splitLine1 = line.split("KATA :");
                   String[] splitLine2 = splitLine1[1].split(" \\(pt:");
 
                   String kata = splitLine2[0].trim();
                   Integer totalPoints = Integer.parseInt(splitLine2[1].replace(")", ""));
 
-                  test = new Test();
-                  test.setKata(kata);
-                  test.setTotalPoints(totalPoints);
-                  test.setPassed(0);
-                  test.setFailed(0);
-                  test.setResult(savedTestResult);
+                  // Check if a test for this kata already exists
+                  test = testResult.getTests().stream()
+                      .filter(t -> t.getKata().equals(kata))
+                      .findFirst()
+                      .orElse(null);
 
-                  testRepository.saveAndFlush(test);
+                  // If a test for this kata does not exist, create a new one
+                  if (test == null) {
+                    test = new Test();
+                    test.setKata(kata);
+                    test.setTotalPoints(totalPoints);
+                    test.setPassed(0);
+                    test.setFailed(0);
+                    test.setResult(savedTestResult);
+
+                    testRepository.saveAndFlush(test);
+                  }
 
                 } else if (test != null && line.contains("✔")) {
                   test.setResult(savedTestResult);
                   String[] splitLine = line.split("(p:)");
                   Integer points = Integer.parseInt(splitLine[1].replace(")", "").trim());
 
-                  if (points.equals(1) && test.getPassed() != null) {
+                  if (line.contains("✔") && test.getPassed() != null) {
                     test.setPassed(test.getPassed() + 1);
-                    score++;
-                  } else if (test.getFailed() != null) {
-                    test.setFailed(test.getFailed() + 1);
+                    score += points;
                   }
 
                   testRepository.saveAndFlush(test);
-                  testResult.setScore(score);
+
+                } else if (test != null) {
+                  if (line.matches("^\\s+\\d+\\) .*")) {
+                    if (test.getFailed() != null) {
+                      test.setFailed(test.getFailed() + 1);
+                    }
+                    testRepository.saveAndFlush(test);
+                  }
                 }
               } catch (Exception e) {
                 log.error("Error occurred while processing line: " + line, e);
@@ -136,6 +147,10 @@ public class TestService {
             }
 
             if (test != null) {
+              testResult.setScore(score);
+              testResult.getTests().add(test);
+              savedTestResult = resultRepository.saveAndFlush(testResult);
+
               List<TestResult> sessionTestResults = toTest.getResults();
               if (sessionTestResults == null) {
                 sessionTestResults = new ArrayList<>();

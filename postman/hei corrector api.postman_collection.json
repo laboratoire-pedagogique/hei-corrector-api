@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "3ca1cfef-dad1-4101-82bd-b1d19d49ce4e",
+		"name": "hei corrector api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21046166"
+	},
+	"item": [
+		{
+			"name": "health",
+			"item": [
+				{
+					"name": "hello there",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_uri}}/hello_there",
+							"host": [
+								"{{base_uri}}"
+							],
+							"path": [
+								"hello_there"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "session",
+			"item": [
+				{
+					"name": "get sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_uri}}/sessions?page=1&page_size=10",
+							"host": [
+								"{{base_uri}}"
+							],
+							"path": [
+								"sessions"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crupdate sessions",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": \"session_test_id\",\n    \"name\": \"session_test\",\n    \"associated_course\": \"string\",\n    \"date\": \"2023-07-29T06:07:04.035Z\",\n    \"type\": \"TEST\",\n    \"source\": \"test\"\n  }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_uri}}/sessions",
+							"host": [
+								"{{base_uri}}"
+							],
+							"path": [
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "run session's tests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_uri}}/sessions/session_test_id/test",
+							"host": [
+								"{{base_uri}}"
+							],
+							"path": [
+								"sessions",
+								"session_test_id",
+								"test"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_uri",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
