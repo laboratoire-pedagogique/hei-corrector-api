@@ -6,7 +6,7 @@ Pour utiliser l'API, il faudra:
 
 1) assigner les valeurs requises aux env **db_url**, **db_username** et **db_password**.
 2) créer un dossier "**output**".
-3) mettre les sujets à tester dans le dossier **srcset**. (eg: **srcset/test/** avec les dossiers des tests pour les h4 à l'intérieur)
+3) mettre les sujets à tester dans le dossier **srcset**/**session_source**/**(nom des dossiers en ref étudiant)** (eg: **srcset/test/** avec les dossiers des tests pour les h4 à l'intérieur)
 4) s'assurer que les **package.json** dans chaque sous-dossiers à tester peuvent lancer les tests. (voir modifications dans **h4-exam**)
 5) utiliser le format suivant pour les tests:
  
